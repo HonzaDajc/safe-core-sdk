@@ -1,6 +1,7 @@
 import { GnosisSafeProxyFactoryContract } from '@gnosis.pm/safe-core-sdk-types'
 import { TransactionReceipt } from 'web3-core/types'
 import { ProxyFactory as ProxyFactory_V1_1_1 } from '../../../typechain/src/web3-v1/v1.1.1/proxy_factory'
+import { ProxyFactory as ProxyFactory_V1_2_0 } from '../../../typechain/src/web3-v1/v1.1.1/proxy_factory'
 import { ProxyFactory as ProxyFactory_V1_3_0 } from '../../../typechain/src/web3-v1/v1.3.0/proxy_factory'
 import { Web3TransactionOptions } from '../../types'
 import { toTxResult } from '../../utils'
@@ -14,7 +15,7 @@ export interface CreateProxyProps {
 }
 
 class GnosisSafeProxyFactoryWeb3Contract implements GnosisSafeProxyFactoryContract {
-  constructor(public contract: ProxyFactory_V1_3_0 | ProxyFactory_V1_1_1) {}
+  constructor(public contract: ProxyFactory_V1_3_0 | ProxyFactory_V1_2_0 | ProxyFactory_V1_1_1) {}
 
   getAddress(): string {
     return this.contract.options.address
