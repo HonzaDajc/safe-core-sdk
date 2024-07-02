@@ -34,8 +34,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@safe-global/protocol-kit": "^3.1.1",
-    "@safe-global/relay-kit": "^2.1.1",
-    "@safe-global/safe-core-sdk-types": "^4.1.1"
+    "@safe-global/protocol-kit": "../safe-core-sdk/packages/protocol-kit",
+    "@safe-global/relay-kit": "../safe-core-sdk/packages/relay-kit",
+    "@safe-global/safe-core-sdk-types": "../safe-core-sdk/packages/safe-core-sdk-types"
   }
 }
