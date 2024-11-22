@@ -253,10 +253,13 @@ export async function predictSafeAddress({
   validateSafeAccountConfig(safeAccountConfig)
   validateSafeDeploymentConfig(safeDeploymentConfig)
 
+  //console.log('predictSafeAddress function called:')
   const {
     safeVersion = DEFAULT_SAFE_VERSION,
     saltNonce = getChainSpecificDefaultSaltNonce(chainId)
   } = safeDeploymentConfig
+  //console.log('safeVersion', safeVersion)
+  console.log('saltNonce', saltNonce)
 
   const safeProxyFactoryContract = await memoizedGetProxyFactoryContract({
     ethAdapter,
@@ -264,6 +267,7 @@ export async function predictSafeAddress({
     customContracts,
     chainId: chainId.toString()
   })
+  //console.log('safeProxyFactoryContract', safeProxyFactoryContract.getAddress)
 
   const proxyCreationCode = await memoizedGetProxyCreationCode({
     ethAdapter,
@@ -271,6 +275,7 @@ export async function predictSafeAddress({
     customContracts,
     chainId: chainId.toString()
   })
+  //console.log('proxyCreationCode', proxyCreationCode)
 
   const safeContract = await memoizedGetSafeContract({
     ethAdapter,
@@ -279,6 +284,7 @@ export async function predictSafeAddress({
     customContracts,
     chainId: chainId.toString()
   })
+  //console.log('safeContract', safeContract)
 
   const initializer = await encodeSetupCallData({
     ethAdapter,
@@ -287,15 +293,21 @@ export async function predictSafeAddress({
     customContracts,
     customSafeVersion: safeVersion // it is more efficient if we provide the safeVersion manually
   })
+  //console.log('initializer', initializer)
 
   const encodedNonce = toBuffer(ethAdapter.encodeParameters(['uint256'], [saltNonce])).toString(
     'hex'
   )
+  //console.log('encodedNonce', encodedNonce)
+
   const salt = keccak256(
     toBuffer('0x' + keccak256(toBuffer(initializer)).toString('hex') + encodedNonce)
   )
+  //console.log('salt', salt)
   const input = ethAdapter.encodeParameters(['address'], [await safeContract.getAddress()])
+  console.log('input mastercopy', input)
   const from = await safeProxyFactoryContract.getAddress()
+  console.log('safe proxy', from)
 
   // On the zkSync Era chain, the counterfactual deployment address is calculated differently
   const isZkSyncEraChain = [ZKSYNC_MAINNET, ZKSYNC_TESTNET].includes(chainId)
@@ -306,11 +318,16 @@ export async function predictSafeAddress({
   }
 
   const constructorData = toBuffer(input).toString('hex')
+  //console.log('constructorData', constructorData)
   const initCode = proxyCreationCode + constructorData
+  //console.log('initCode', initCode)
   const proxyAddress =
     '0x' + generateAddress2(toBuffer(from), toBuffer(salt), toBuffer(initCode)).toString('hex')
+  //console.log('proxyAddress', proxyAddress)
   const predictedAddress = ethAdapter.getChecksummedAddress(proxyAddress)
 
+  console.log('predictedAddress', predictedAddress)
+  console.log('=====================================================')
   return predictedAddress
 }
 

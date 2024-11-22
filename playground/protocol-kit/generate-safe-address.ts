@@ -11,8 +11,8 @@ import { ethers } from 'ethers'
 
 const config: Config = {
   // REQUIRED PARAMETERS
-  owners: ['0x680cde08860141F9D223cE4E620B10Cd6741037E'],
-  rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+  owners: ['OWNER_ADDRESS'],
+  rpcUrl: 'http://localhost:8545',
   // OPTIONAL PARAMETERS
   pattern: '0x5afe',
   safeVersion: '1.3.0',
@@ -32,7 +32,7 @@ async function generateSafeAddresses() {
   const chainId = await ethAdapter.getChainId()
 
   // infinite loop to search a valid Safe addresses
-  for (saltNonce; true; saltNonce++ && iteractions++) {
+  for (saltNonce; saltNonce< 20; saltNonce++ && iteractions++) {
     // we updete the Deployment config with the current saltNonce
     const safeDeploymentConfig: SafeDeploymentConfig = {
       saltNonce: saltNonce.toString(), // this change each iteraction
@@ -48,7 +48,7 @@ async function generateSafeAddresses() {
     })
 
     // we print a message in the console with some data about the performance
-    printPerfomanceMessage(iteractions, saltNonce)
+    //printPerfomanceMessage(iteractions, saltNonce)
 
     // we check if its a valid address based on the provided pattern
     const isValidAddress = checkAddressPattern(predictedSafeAddress)

@@ -17,12 +17,12 @@ interface Config {
 }
 
 const config: Config = {
-  RPC_URL: 'https://rpc.ankr.com/eth_sepolia',
+  RPC_URL: 'http://localhost:8545',
   DEPLOYER_ADDRESS_PRIVATE_KEY: '<DEPLOYER_ADDRESS_PRIVATE_KEY>',
   DEPLOY_SAFE: {
     OWNERS: ['OWNER_ADDRESS'],
     THRESHOLD: 1, // <SAFE_THRESHOLD>
-    SALT_NONCE: '150000',
+    SALT_NONCE: '0',
     SAFE_VERSION: '1.3.0'
   }
 }
@@ -49,28 +49,31 @@ async function main() {
     owners: config.DEPLOY_SAFE.OWNERS,
     threshold: config.DEPLOY_SAFE.THRESHOLD
   }
-  const saltNonce = config.DEPLOY_SAFE.SALT_NONCE
+  let saltNonce = 0
 
-  // Predict deployed address
-  const predictedDeploySafeAddress = await safeFactory.predictSafeAddress(
-    safeAccountConfig,
-    saltNonce
-  )
+  for (saltNonce; saltNonce < 20; saltNonce++) {
 
-  console.log('Predicted deployed Safe address:', predictedDeploySafeAddress)
+    // Predict deployed address
+    const predictedDeploySafeAddress = await safeFactory.predictSafeAddress(
+      safeAccountConfig,
+      saltNonce.toString()
+    )
 
-  function callback(txHash: string) {
-    console.log('Transaction hash:', txHash)
+    console.log('Predicted deployed Safe address:', predictedDeploySafeAddress)
+
+    function callback(txHash: string) {
+      console.log('Transaction hash:', txHash)
+    }
+
+    // Deploy Safe
+    const safe = await safeFactory.deploySafe({
+      safeAccountConfig,
+      saltNonce: saltNonce.toString(),
+      callback
+    })
+
+    console.log('Deployed Safe:', await safe.getAddress())
   }
-
-  // Deploy Safe
-  const safe = await safeFactory.deploySafe({
-    safeAccountConfig,
-    saltNonce,
-    callback
-  })
-
-  console.log('Deployed Safe:', await safe.getAddress())
 }
 
 main()
