@@ -2,8 +2,13 @@ import { SafeAccountConfig, SafeFactory } from '@safe-global/protocol-kit'
 import { EthersAdapter } from '@safe-global/protocol-kit'
 import { SafeVersion } from '@safe-global/safe-core-sdk-types'
 import { ethers } from 'ethers'
+import * as dotenv from 'dotenv'
 
 // This file can be used to play around with the Safe Core SDK
+
+dotenv.config()
+
+const { URL, PK, SIGNER_ADDRESS } = process.env
 
 interface Config {
   RPC_URL: string
@@ -17,10 +22,10 @@ interface Config {
 }
 
 const config: Config = {
-  RPC_URL: 'http://localhost:8545',
-  DEPLOYER_ADDRESS_PRIVATE_KEY: '<DEPLOYER_ADDRESS_PRIVATE_KEY>',
+  RPC_URL: URL!,
+  DEPLOYER_ADDRESS_PRIVATE_KEY: PK!,
   DEPLOY_SAFE: {
-    OWNERS: ['OWNER_ADDRESS'],
+    OWNERS: [SIGNER_ADDRESS!],
     THRESHOLD: 1, // <SAFE_THRESHOLD>
     SALT_NONCE: '0',
     SAFE_VERSION: '1.3.0'

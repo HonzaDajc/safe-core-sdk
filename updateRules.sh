@@ -1,0 +1,1 @@
+yarn play update-rules

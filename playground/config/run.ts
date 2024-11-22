@@ -8,6 +8,7 @@ const playgroundProtocolKitPaths = {
   'create-execute-transaction': 'protocol-kit/create-execute-transaction',
   'deploy-safe': 'protocol-kit/deploy-safe',
   'generate-safe-address': 'protocol-kit/generate-safe-address',
+  'update-rules': 'protocol-kit/update-rules',
   eip1271: 'protocol-kit/eip1271'
 }
 const playgroundApiKitPaths = {

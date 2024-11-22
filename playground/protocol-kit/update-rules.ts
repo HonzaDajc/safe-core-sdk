@@ -2,11 +2,16 @@ import { ethers } from 'ethers'
 import * as dotenv from 'dotenv'
 import Safe, { EthersAdapter, SigningMethod } from '@safe-global/protocol-kit'
 import { OperationType, SafeTransactionDataPartial } from '@safe-global/safe-core-sdk-types'
+import fs from 'fs';
+
 
 dotenv.config()
 
-const { URL, PK, SAFE_ACCOUNT } = process.env
+const { URL } = process.env
+const { PK } = process.env
+const { SAFE_ACCOUNT } = process.env
 
+const NodeDriverAuthAddress = "0xd100ae0000000000000000000000000000000000";
 // This file can be used to play around with the Safe Core SDK
 // The script creates, signs and executes a transaction for an existing 1/1 Safe
 
@@ -40,17 +45,19 @@ async function main() {
     safeAddress: config.SAFE_ADDRESS
   })
 
+  let callData = prepareUpdateNetworkRulesCall("rules.json");
+
   console.log('Creating transaction with Safe:')
   console.log(' - Address: ', await safe.getAddress())
   console.log(' - ChainID: ', await safe.getChainId())
   console.log(' - Version: ', await safe.getContractVersion())
   console.log(' - Threshold: ', await safe.getThreshold(), '\n')
 
-  // Create transaction to store contract on devnet
+  // Create transaction
   const safeTransactionData: SafeTransactionDataPartial = {
-    to: '0xdb6026ccc2bbed2725e2fb9b1b12785e89d9dfb3',
+    to: NodeDriverAuthAddress,
     value: '0', // 0.001 ether
-    data: '0x6057361d0000000000000000000000000000000000000000000000000000000000000002',
+    data: callData,
     operation: OperationType.Call
   }
 
@@ -90,5 +97,26 @@ async function main() {
   console.log('Succesfully executed the transaction:')
   console.log(' - Tx hash: ', result.hash)
 }
+
+function prepareUpdateNetworkRulesCall(rulesPath : string) {
+    // load contents of rulesPath file and convert it to bytes
+    const rules = fs.readFileSync(rulesPath);
+    var rulesBytes = new Uint8Array(rules)
+    var iface = new ethers.Interface(NodeDriverAuthAbi)
+    var calldata = iface.encodeFunctionData("updateNetworkRules", [rulesBytes]);
+    return calldata;
+}
+
+
+const NodeDriverAuthAbi = [{
+    "constant": false,
+    "inputs": [{"internalType": "bytes", "name": "diff", "type": "bytes"}],
+    "name": "updateNetworkRules",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}];
+
 
 main()

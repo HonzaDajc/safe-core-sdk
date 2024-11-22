@@ -6,13 +6,17 @@ import {
 } from '@safe-global/protocol-kit'
 import { SafeVersion } from '@safe-global/safe-core-sdk-types'
 import { ethers } from 'ethers'
+import * as dotenv from 'dotenv'
 
+dotenv.config()
+
+const { URL, SIGNER_ADDRESS } = process.env
 // This script can be used to generate a custom Safe address
 
 const config: Config = {
   // REQUIRED PARAMETERS
-  owners: ['OWNER_ADDRESS'],
-  rpcUrl: 'http://localhost:8545',
+  owners: [SIGNER_ADDRESS!],
+  rpcUrl: URL!,
   // OPTIONAL PARAMETERS
   pattern: '0x5afe',
   safeVersion: '1.3.0',
