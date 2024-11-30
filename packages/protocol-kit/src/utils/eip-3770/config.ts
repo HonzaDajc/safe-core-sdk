@@ -120,6 +120,7 @@ export const networks: NetworkShortName[] = [
   { chainId: 4002n, shortName: 'tftm' },
   { chainId: 4003n, shortName: 'sont' },
   { chainId: 57054n, shortName: 'sond' },
+  { chainId: 146n, shortName: 'son' },
   { chainId: 4078n, shortName: 'muster' },
   { chainId: 4157n, shortName: 'crossfi-testnet' },
   { chainId: 4202n, shortName: 'lisksep' },
